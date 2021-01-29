@@ -24,15 +24,10 @@ def Display_Picture(File_Name):
     OLED.Display_Image(image)
     
 def url_to_image(url):
-    print("1")
     resp = urllib.request.urlopen(url)
-    print("2")
     image = np.asarray(bytearray(resp.read()), dtype="uint8")
-    print("3")
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    print("4")
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    print("5")
     return image
 
 def analyze_images(image):
@@ -68,25 +63,15 @@ try:
                 col = col.json()
                 for m in col["manifests"]:
                     Display_Picture("iiiflogo128.jpg")
-                    print("a")
                     man = requests.get(m["@id"])
-                    print("b")
                     man = man.json()
-                    print("c")
                     srv = man["sequences"][0]["canvases"][0]["images"][0]["resource"]["service"]["@id"]
-                    print("d")
                     img = url_to_image(srv+"/full/pct:%s,/0/native.jpg"%(4))
-                    print("e")
                     fcs = analyze_images(img)
-                    print("f")
                     for (x, y, w, h) in fcs:
-                        print("f2")
                         fn = wget.download(srv+"/%d,%d,%d,%d/128,128/0/default.jpg" % (x*25,y*25,w*25,h*25))
-                        print("g")
                         Display_Picture(fn)
-                        print("h")
                         OLED.Delay(3000)    
-                        print("i")
                         os.remove(fn)
 
 
@@ -98,5 +83,4 @@ except:
     os.remove(fn)
     OLED.Clear_Screen()
     GPIO.cleanup()
-
 
